@@ -458,6 +458,57 @@ RCT_EXPORT_METHOD(updateConversation:(NSString *)conversationId params:(NSDictio
     }];
 }
 
+RCT_EXPORT_METHOD(getConversationWithUser:(NSString *)userId callback:(RCTResponseSenderBlock)callback) {
+    if (!_client || !_client.hasConnected || !_client.userId.length) {
+        callback(@[@(NO), @(-1), @"StringeeClient is not initialized or connected.", [NSNull null]]);
+        return;
+    }
+    
+    if (!userId || ![userId isKindOfClass:[NSString class]] || !userId.length || [userId isEqualToString:_client.userId]) {
+        callback(@[@(NO), @(-2), @"UserId is invalid."]);
+        return;
+    }
+    
+    NSMutableSet *users = [[NSMutableSet alloc] init];
+    StringeeIdentity *iden = [StringeeIdentity new];
+    iden.userId = userId;
+    [users addObject:iden];
+    
+    StringeeIdentity *meUser = [StringeeIdentity new];
+    meUser.userId = _client.userId;
+    [users addObject:meUser];
+    
+    [_client getConversationForUsers:users completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+        if (!conversations) {
+            callback(@[@(NO), @(-4), @"Conversation is not found.", [NSNull null]]);
+            return;
+        }
+        
+        if (conversations.count == 0) {
+            callback(@[@(NO), @(-4), @"Conversation is not found.", [NSNull null]]);
+            return;
+        }
+        
+        for (StringeeConversation *conversation in conversations) {
+            if (conversation.isGroup == false) {
+                callback(@[@(status), @(code), message, [RCTConvert StringeeConversation:conversation]]);
+                return;
+            }
+        }
+        
+    }];
+}
+
+RCT_EXPORT_METHOD(getUnreadConversationCount:(RCTResponseSenderBlock)callback) {
+    if (!_client || !_client.hasConnected) {
+        callback(@[@(NO), @(-1), @"StringeeClient is not initialized or connected.", @(0)]);
+        return;
+    }
+    
+    [_client getUnreadConversationCountWithCompletionHandler:^(BOOL status, int code, NSString *message, int count) {
+        callback(@[@(status), @(code), message, @(count)]);
+    }];
+}
 
 #pragma mark - Message
 
@@ -467,7 +518,6 @@ RCT_EXPORT_METHOD(sendMessage:(NSDictionary *)message callback:(RCTResponseSende
 //    NSDictionary *dicData = [NSJSONSerialization JSONObjectWithData:msgData
 //                                                         options:NSJSONReadingMutableContainers
 //                                                           error:&jsonError];
-
     if (!message || ![message isKindOfClass:[NSDictionary class]]) {
         callback(@[@(NO), @(-2), @"Message is invalid."]);
         return;
@@ -484,12 +534,13 @@ RCT_EXPORT_METHOD(sendMessage:(NSDictionary *)message callback:(RCTResponseSende
         return;
     }
     
-    NSString *text = message[@"text"];
-    NSNumber *type = message[@"type"];
-    NSString *conversationId = message[@"conversationId"];
+    id text = message[@"text"];
+    id type = message[@"type"];
+    id conversationId = message[@"conversationId"];
     
-    if (!text.length || !type || !conversationId.length) {
+    if (![text isKindOfClass:[NSString class]] || ![conversationId isKindOfClass:[NSString class]] || ![type isKindOfClass:[NSNumber class]]) {
         callback(@[@(NO), @(-2), @"Message is invalid."]);
+        return;
     }
     
     // Lấy về conversation

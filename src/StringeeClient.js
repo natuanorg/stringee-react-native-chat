@@ -231,6 +231,20 @@ export default class extends Component {
     RNStringeeClient.markConversationAsRead(conversationId, callback);
   }
 
+  getConversationsWithUser(userId, callback) {
+    RNStringeeClient.getConversationWithUser(userId, (status, code, message, conversation) => {
+      var returnConversation;
+      if (status) {
+        returnConversation = new Conversation(conversation);
+      }
+      return callback(status, code, message, returnConversation);
+    });
+  }
+
+  getUnreadConversationCount(callback) {
+    RNStringeeClient.getUnreadConversationCount(callback);
+  }
+
   sendMessage(message, callback) {
     RNStringeeClient.sendMessage(message, callback);
   }

@@ -97,6 +97,7 @@
 + (NSDictionary *)StringeeMessage:(StringeeMessage *)message {
     if (!message) return RCTNullIfNil(nil);
     
+    NSString *localId = message.localIdentifier.length ? message.localIdentifier : @"";
     NSString *identifier = message.identifier.length ? message.identifier : @"";
     NSString *conversationId = message.convId.length ? message.convId : @"";
     NSString *sender = message.sender.length ? message.sender : @"";
@@ -200,6 +201,7 @@
     
     
     return @{
+             @"localId": localId,
              @"id": identifier,
              @"conversationId": conversationId,
              @"sender": sender,
