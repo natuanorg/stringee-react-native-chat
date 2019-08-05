@@ -1118,5 +1118,72 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
             }
         });
     }
+
+    @ReactMethod
+    public void getConversationWithUser(String userId, final Callback callback) {
+        if (mClient == null) {
+            callback.invoke(false, -1, "StringeeClient is not initialized");
+            return;
+        }
+
+        if (userId == null) {
+            callback.invoke(false, -2, "User id can not be null");
+            return;
+        }
+
+        mClient.getConversationByUserId(userId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                WritableMap params = Arguments.createMap();
+                params.putString("id", conversation.getId());
+                params.putString("localId", conversation.getLocalId());
+                params.putString("name", conversation.getName());
+                params.putBoolean("isDistinct", conversation.isDistinct());
+                params.putBoolean("isGroup", conversation.isGroup());
+                params.putDouble("updatedAt", conversation.getUpdateAt());
+                params.putString("lastMsgSender", conversation.getLastMsgSender());
+                params.putString("text", conversation.getText());
+                params.putInt("lastMsgType", conversation.getLastMsgType());
+                params.putInt("unreadCount", conversation.getTotalUnread());
+                List<User> participants = conversation.getParticipants();
+                WritableArray participantsMap = Arguments.createArray();
+                for (int i = 0; i < participants.size(); i++) {
+                    User user = participants.get(i);
+                    WritableMap userMap = Arguments.createMap();
+                    userMap.putString("userId", user.getUserId());
+                    userMap.putString("name", user.getName());
+                    userMap.putString("avatar", user.getAvatarUrl());
+                    participantsMap.pushMap(userMap);
+                }
+                params.putArray("participants", participantsMap);
+                callback.invoke(true, 0, "Success", params);
+            }
+
+            @Override
+            public void onError(StringeeError error) {
+                callback.invoke(false, error.getCode(), error.getMessage());
+            }
+        });
+    }
+
+    @ReactMethod
+    public void getUnreadConversationCount(final Callback callback) {
+        if (mClient == null) {
+            callback.invoke(false, -1, "StringeeClient is not initialized");
+            return;
+        }
+
+        mClient.getTotalUnread(new CallbackListener<Integer>() {
+            @Override
+            public void onSuccess(Integer count) {
+                callback.invoke(true, 0, "Success", count);
+            }
+
+            @Override
+            public void onError(StringeeError error) {
+                callback.invoke(false, error.getCode(), error.getMessage());
+            }
+        });
+    }
 }
 
