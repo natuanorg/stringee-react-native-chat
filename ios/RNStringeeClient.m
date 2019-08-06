@@ -549,9 +549,13 @@ RCT_EXPORT_METHOD(sendMessage:(NSDictionary *)message callback:(RCTResponseSende
             callback(@[@(NO), @(-3), @"Conversation not found."]);
             return;
         }
+    
+        if (!_client || !_client.hasConnected) {
+            callback(@[@(NO), @(-1), @"StringeeClient is not initialized or connected."]);
+            return;
+        }
         
         NSError *error;
-
         // Gửi tất cả như text message
         StringeeTextMessage *textMsg = [[StringeeTextMessage alloc] initWithText:content metadata:nil];
         
