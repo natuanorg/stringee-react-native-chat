@@ -62,6 +62,7 @@
 
     NSString *identifier = conversation.identifier ? conversation.identifier : @"";
     NSString *name = conversation.name ? conversation.name : @"";
+    NSString *lastMsgId = conversation.lastMsg.identifier ? conversation.lastMsg.identifier : @"";
 
     NSMutableArray *participants = [[NSMutableArray alloc] init];
     for (StringeeIdentity *identity in conversation.participants) {
@@ -79,7 +80,8 @@
              @"lastMsgSender" : lastMsgSender,
              @"text": text,
              @"lastMsgType": @(conversation.lastMsg.type),
-             @"unreadCount": @(conversation.unread)
+             @"unreadCount": @(conversation.unread),
+             @"lastMsgId": lastMsgId
              };
 }
 
@@ -110,13 +112,14 @@
         text = content;
         type = [NSNumber numberWithInt:message.type];
     } else {
-        NSError *jsonError;
-        NSData *msgData = [content dataUsingEncoding:NSUTF8StringEncoding];
-        NSDictionary *dicData = [NSJSONSerialization JSONObjectWithData:msgData
-                                                                options:NSJSONReadingMutableContainers
-                                                                  error:&jsonError];
+         NSError *jsonError;
+         NSData *msgData = [content dataUsingEncoding:NSUTF8StringEncoding];
+         NSDictionary *dicData = [NSJSONSerialization JSONObjectWithData:msgData
+                                                                 options:NSJSONReadingMutableContainers
+                                                                   error:&jsonError];
         
-        text = dicData[@"text"] != nil && dicData[@"text"] != [NSNull null] ? dicData[@"text"] : @"";
+//         text = dicData[@"text"] != nil && dicData[@"text"] != [NSNull null] ? dicData[@"text"] : @"";
+        text = content;
         type = dicData[@"type"] != nil && dicData[@"type"] != [NSNull null] ? dicData[@"type"] : [NSNumber numberWithInt:1];
     }
     
