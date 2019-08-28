@@ -216,6 +216,11 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
         }
     }
 
+    @Override
+    public void onTopicMessage(String s, JSONObject jsonObject) {
+
+    }
+
     private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap eventData) {
         reactContext
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
@@ -283,6 +288,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putString("text", conversation.getText());
                 params.putInt("lastMsgType", conversation.getLastMsgType());
                 params.putInt("unreadCount", conversation.getTotalUnread());
+                params.putString("lastMsgId", conversation.getLastMsgId());
                 List<User> participants = conversation.getParticipants();
                 WritableArray participantsMap = Arguments.createArray();
                 for (int i = 0; i < participants.size(); i++) {
@@ -330,6 +336,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putString("text", conversation.getText());
                 params.putInt("lastMsgType", conversation.getLastMsgType());
                 params.putInt("unreadCount", conversation.getTotalUnread());
+                params.putString("lastMsgId", conversation.getLastMsgId());
                 List<User> participants = conversation.getParticipants();
                 WritableArray participantsMap = Arguments.createArray();
                 for (int i = 0; i < participants.size(); i++) {
@@ -380,6 +387,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putString("text", conversation.getText());
                     param.putInt("lastMsgType", conversation.getLastMsgType());
                     param.putInt("unreadCount", conversation.getTotalUnread());
+                    param.putString("lastMsgId", conversation.getLastMsgId());
                     List<User> participants = conversation.getParticipants();
                     WritableArray participantsMap = Arguments.createArray();
                     for (int j = 0; j < participants.size(); j++) {
@@ -428,6 +436,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putString("text", conversation.getText());
                     param.putInt("lastMsgType", conversation.getLastMsgType());
                     param.putInt("unreadCount", conversation.getTotalUnread());
+                    param.putString("lastMsgId", conversation.getLastMsgId());
                     List<User> participants = conversation.getParticipants();
                     WritableArray participantsMap = Arguments.createArray();
                     for (int j = 0; j < participants.size(); j++) {
@@ -476,6 +485,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putString("text", conversation.getText());
                     param.putInt("lastMsgType", conversation.getLastMsgType());
                     param.putInt("unreadCount", conversation.getTotalUnread());
+                    param.putString("lastMsgId", conversation.getLastMsgId());
                     List<User> participants = conversation.getParticipants();
                     WritableArray participantsMap = Arguments.createArray();
                     for (int j = 0; j < participants.size(); j++) {
@@ -524,6 +534,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putString("text", conversation.getText());
                     param.putInt("lastMsgType", conversation.getLastMsgType());
                     param.putInt("unreadCount", conversation.getTotalUnread());
+                    param.putString("lastMsgId", conversation.getLastMsgId());
                     List<User> participants = conversation.getParticipants();
                     WritableArray participantsMap = Arguments.createArray();
                     for (int j = 0; j < participants.size(); j++) {
@@ -1024,6 +1035,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 object.putString("text", conversation.getText());
                 object.putInt("lastMsgType", conversation.getLastMsgType());
                 object.putInt("unreadCount", conversation.getTotalUnread());
+                object.putString("lastMsgId",conversation.getLastMsgId());
 
                 List<User> participants = conversation.getParticipants();
                 WritableArray participantsMap = Arguments.createArray();
@@ -1145,6 +1157,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putString("text", conversation.getText());
                 params.putInt("lastMsgType", conversation.getLastMsgType());
                 params.putInt("unreadCount", conversation.getTotalUnread());
+                params.putString("lastMsgId", conversation.getLastMsgId());
                 List<User> participants = conversation.getParticipants();
                 WritableArray participantsMap = Arguments.createArray();
                 for (int i = 0; i < participants.size(); i++) {
