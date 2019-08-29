@@ -18,7 +18,6 @@ static NSString *didReceiveCustomMessage    = @"didReceiveCustomMessage";
 // Chat
 static NSString *objectChangeNotification   = @"objectChangeNotification";
 
-
 @implementation RNStringeeClient {
     NSMutableArray<NSString *> *jsEvents;
     BOOL isConnecting;
@@ -32,6 +31,7 @@ RCT_EXPORT_MODULE();
     self = [super init];
     [RNStringeeInstanceManager instance].rnClient = self;
     jsEvents = [[NSMutableArray alloc] init];
+    _messages = [[NSMutableDictionary alloc] init];
     return self;
 }
 
@@ -543,8 +543,16 @@ RCT_EXPORT_METHOD(sendMessage:(NSDictionary *)message callback:(RCTResponseSende
         return;
     }
     
+    __weak RNStringeeClient *weakSelf = self;
+    
     // Lấy về conversation
     [_client getConversationWithConversationId:conversationId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        RNStringeeClient *strongSelf = weakSelf;
+        if (!strongSelf) {
+            callback(@[@(NO), @(-3), @"Conversation not found."]);
+            return;
+        }
+        
         if (!conversation) {
             callback(@[@(NO), @(-3), @"Conversation not found."]);
             return;
@@ -558,6 +566,7 @@ RCT_EXPORT_METHOD(sendMessage:(NSDictionary *)message callback:(RCTResponseSende
         NSError *error;
         // Gửi tất cả như text message
         StringeeTextMessage *textMsg = [[StringeeTextMessage alloc] initWithText:content metadata:nil];
+        [strongSelf.messages setObject:textMsg forKey:textMsg.localIdentifier];
         
         [conversation sendMessage:textMsg error:&error];
         if (error) {
@@ -732,6 +741,17 @@ RCT_EXPORT_METHOD(clearDb:(RCTResponseSenderBlock)callback) {
     } else if ([firstObject isKindOfClass:[StringeeMessage class]]) {
         objectType = 1;
         jsObjectDatas = [RCTConvert StringeeMessages:objects];
+        
+        // Xoá đối tượng message đã lưu
+        for (NSDictionary *message in jsObjectDatas) {
+            NSNumber *state = message[@"state"];
+            if (state.intValue == StringeeMessageStatusRead) {
+                NSString *localId = message[@"localId"];
+                if (localId) {
+                    [_messages removeObjectForKey:localId];
+                }
+            }
+        }
     } else {
         objectType = 2;
     }
