@@ -617,7 +617,7 @@ RCT_EXPORT_METHOD(getLocalMessages:(NSString *)conversationId count:(NSUInteger)
         }
         
         [conversation getLocalMessagesWithCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
-            callback(@[@(status), @(code), message, [RCTConvert StringeeMessages:messages]]);
+            callback(@[@(status), @(code), message, [RCTConvert StringeeMessages:[[messages reverseObjectEnumerator] allObjects]]]);
         }];
     }];
 }
@@ -637,7 +637,7 @@ RCT_EXPORT_METHOD(getLastMessages:(NSString *)conversationId count:(NSUInteger)c
         }
         
         [conversation getLastMessagesWithCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
-            callback(@[@(status), @(code), message, [RCTConvert StringeeMessages:messages]]);
+            callback(@[@(status), @(code), message, [RCTConvert StringeeMessages:[[messages reverseObjectEnumerator] allObjects]]]);
         }];
     }];
 }
@@ -677,7 +677,7 @@ RCT_EXPORT_METHOD(getMessagesBefore:(NSString *)conversationId sequence:(NSUInte
         }
         
         [conversation getMessagesBefore:sequence withCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
-            callback(@[@(status), @(code), message, [RCTConvert StringeeMessages:messages]]);
+            callback(@[@(status), @(code), message, [RCTConvert StringeeMessages:[[messages reverseObjectEnumerator] allObjects]]]);
         }];
     }];
 }
