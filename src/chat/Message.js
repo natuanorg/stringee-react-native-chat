@@ -9,7 +9,7 @@ class Message {
         this.state = props.state;
         this.sequence = props.sequence;
         this.type = props.type;
-        this.text = props.text;
+        this.content = props.content;
     }
 }
 

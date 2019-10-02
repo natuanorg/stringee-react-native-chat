@@ -11,6 +11,8 @@ class Conversation {
         this.lastMsgType = props.lastMsgType;
         this.unreadCount = props.unreadCount;
         this.lastMsgId = props.lastMsgId;
+        this.creator = props.creator;
+        this.created = props.created;
 
         var parts = [];
         var tempParts = props.participants;

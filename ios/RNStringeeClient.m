@@ -513,32 +513,16 @@ RCT_EXPORT_METHOD(getUnreadConversationCount:(RCTResponseSenderBlock)callback) {
 #pragma mark - Message
 
 RCT_EXPORT_METHOD(sendMessage:(NSDictionary *)message callback:(RCTResponseSenderBlock)callback) {
-//    NSError *jsonError;
-//    NSData *msgData = [message dataUsingEncoding:NSUTF8StringEncoding];
-//    NSDictionary *dicData = [NSJSONSerialization JSONObjectWithData:msgData
-//                                                         options:NSJSONReadingMutableContainers
-//                                                           error:&jsonError];
     if (!message || ![message isKindOfClass:[NSDictionary class]]) {
         callback(@[@(NO), @(-2), @"Message is invalid."]);
         return;
     }
     
-    NSError *jsonError;
-    NSData *contentData = [NSJSONSerialization dataWithJSONObject:message
-                                                       options:0 error:&jsonError];
-    NSString *content = [[NSString alloc] initWithData:contentData
-                                             encoding:NSUTF8StringEncoding];
+    id msg = message[@"message"];
+    NSNumber *type = message[@"type"];
+    id convId = message[@"convId"];
     
-    if (jsonError || !content.length) {
-        callback(@[@(NO), @(-2), @"Message is invalid."]);
-        return;
-    }
-    
-    id text = message[@"text"];
-    id type = message[@"type"];
-    id conversationId = message[@"conversationId"];
-    
-    if (![text isKindOfClass:[NSString class]] || ![conversationId isKindOfClass:[NSString class]] || ![type isKindOfClass:[NSNumber class]]) {
+    if (![msg isKindOfClass:[NSDictionary class]] || ![convId isKindOfClass:[NSString class]] || ![type isKindOfClass:[NSNumber class]]) {
         callback(@[@(NO), @(-2), @"Message is invalid."]);
         return;
     }
@@ -546,7 +530,8 @@ RCT_EXPORT_METHOD(sendMessage:(NSDictionary *)message callback:(RCTResponseSende
     __weak RNStringeeClient *weakSelf = self;
     
     // Lấy về conversation
-    [_client getConversationWithConversationId:conversationId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        
         RNStringeeClient *strongSelf = weakSelf;
         if (!strongSelf) {
             callback(@[@(NO), @(-3), @"Conversation not found."]);
@@ -563,12 +548,148 @@ RCT_EXPORT_METHOD(sendMessage:(NSDictionary *)message callback:(RCTResponseSende
             return;
         }
         
-        NSError *error;
-        // Gửi tất cả như text message
-        StringeeTextMessage *textMsg = [[StringeeTextMessage alloc] initWithText:content metadata:nil];
-        [strongSelf.messages setObject:textMsg forKey:textMsg.localIdentifier];
+        // Lay data tu message -> khoi tao msg tuong ung trong native
+        StringeeMessage *msgToSend;
+        NSDictionary *dicMsg = (NSDictionary *)msg;
         
-        [conversation sendMessage:textMsg error:&error];
+        switch (type.intValue) {
+            case StringeeMessageTypeText:
+            {
+                NSString *text = dicMsg[@"content"];
+                if (![text isKindOfClass:[NSString class]] || !text.length) {
+                    callback(@[@(NO), @(-2), @"Message is invalid."]);
+                    return;
+                }
+                msgToSend = [[StringeeTextMessage alloc] initWithText:text metadata:nil];
+            }
+                break;
+                
+            case StringeeMessageTypePhoto:
+            {
+                NSDictionary *photoDic = dicMsg[@"photo"];
+                
+                NSString *filePath = photoDic[@"filePath"];
+                NSString *thumbnail = photoDic[@"thumbnail"] != nil ? photoDic[@"thumbnail"] : @"";
+                NSNumber *ratio = photoDic[@"ratio"] != nil ? photoDic[@"ratio"] : @(1);
+
+                if (![filePath isKindOfClass:[NSString class]] || !filePath.length) {
+                    callback(@[@(NO), @(-2), @"Message is invalid."]);
+                    return;
+                }
+                
+                msgToSend = [[StringeePhotoMessage alloc] initWithFileUrl:filePath thumbnailUrl:thumbnail ratio:ratio.floatValue metadata:nil];
+            }
+                break;
+                
+            case StringeeMessageTypeVideo:
+            {
+                NSDictionary *videoDic = dicMsg[@"video"];
+
+                NSString *filePath = videoDic[@"filePath"];
+                NSString *thumbnail = videoDic[@"thumbnail"] != nil ? videoDic[@"thumbnail"] : @"";
+                NSNumber *ratio = videoDic[@"ratio"] != nil ? videoDic[@"ratio"] : @(1);
+                NSNumber *duration = videoDic[@"duration"] != nil ? videoDic[@"duration"] : @(0);
+
+                if (![filePath isKindOfClass:[NSString class]] || !filePath.length) {
+                    callback(@[@(NO), @(-2), @"Message is invalid."]);
+                    return;
+                }
+                msgToSend = [[StringeeVideoMessage alloc] initWithFileUrl:filePath thumbnailUrl:thumbnail ratio:ratio.floatValue duration:duration.doubleValue metadata:nil];
+            }
+                break;
+                
+            case StringeeMessageTypeAudio:
+            {
+                NSDictionary *audioDic = dicMsg[@"audio"];
+
+                NSString *filePath = audioDic[@"filePath"];
+                NSNumber *duration = audioDic[@"duration"] != nil ? audioDic[@"duration"] : @(0);
+                
+                if (![filePath isKindOfClass:[NSString class]] || !filePath.length) {
+                    callback(@[@(NO), @(-2), @"Message is invalid."]);
+                    return;
+                }
+                msgToSend = [[StringeeAudioMessage alloc] initWithFileUrl:filePath duration:duration.doubleValue metadata:nil];
+            }
+                break;
+                
+            case StringeeMessageTypeFile:
+            {
+                NSDictionary *fileDic = dicMsg[@"file"];
+
+                NSString *filePath = fileDic[@"filePath"];
+                NSString *filename = fileDic[@"filename"] != nil ? fileDic[@"filename"] : @"";
+                NSNumber *length = fileDic[@"length"] != nil ? fileDic[@"length"] : @(0);
+                
+                if (![filePath isKindOfClass:[NSString class]] || !filePath.length) {
+                    callback(@[@(NO), @(-2), @"Message is invalid."]);
+                    return;
+                }
+                msgToSend = [[StringeeFileMessage alloc] initWithFileUrl:filePath fileName:filename length:length.longLongValue metadata:nil];
+            }
+                break;
+                
+            case StringeeMessageTypeLink:
+            {
+                NSString *text = dicMsg[@"content"];
+                if (![text isKindOfClass:[NSString class]] || !text.length) {
+                    callback(@[@(NO), @(-2), @"Message is invalid."]);
+                    return;
+                }
+                msgToSend = [[StringeeTextMessage alloc] initWithLink:text metadata:nil];
+            }
+                break;
+                
+            case StringeeMessageTypeLocation:
+            {
+                NSDictionary *locationDic = dicMsg[@"location"];
+
+                NSNumber *lat = locationDic[@"lat"];
+                NSNumber *lon = locationDic[@"lon"];
+                
+                if (!lat || !lon) {
+                    callback(@[@(NO), @(-2), @"Message is invalid."]);
+                    return;
+                }
+                msgToSend = [[StringeeLocationMessage alloc] initWithlatitude:lat.doubleValue longitude:lon.doubleValue metadata:nil];
+            }
+                break;
+                
+            case StringeeMessageTypeContact:
+            {
+                NSString *vcard = dicMsg[@"contact"][@"vcard"];
+                if (![vcard isKindOfClass:[NSString class]] || !vcard.length) {
+                    callback(@[@(NO), @(-2), @"Message is invalid."]);
+                    return;
+                }
+                msgToSend = [[StringeeContactMessage alloc] initWithVcard:vcard metadata:nil];
+            }
+                break;
+                
+            case StringeeMessageTypeSticker:
+            {
+                NSDictionary *stickerDic = dicMsg[@"sticker"];
+
+                NSString *category = stickerDic[@"category"];
+                NSString *name = stickerDic[@"name"];
+
+                if (![category isKindOfClass:[NSString class]] || !category.length || ![name isKindOfClass:[NSString class]] || !name.length) {
+                    callback(@[@(NO), @(-2), @"Message is invalid."]);
+                    return;
+                }
+                msgToSend = [[StringeeStickerMessage alloc] initWithCategory:category name:name metadata:nil];
+            }
+                break;
+                
+            default:
+                callback(@[@(NO), @(-2), @"Message is invalid."]);
+                return;
+        }
+        
+        NSError *error;
+        [strongSelf.messages setObject:msgToSend forKey:msgToSend.localIdentifier];
+        
+        [conversation sendMessageWithoutPretreatment:msgToSend error:&error];
         if (error) {
             callback(@[@(NO), @(1), @"Fail."]);
         } else {
