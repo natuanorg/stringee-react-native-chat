@@ -1,47 +1,12 @@
 {
-  "_from": "stringee-react-native",
-  "_id": "stringee-react-native@1.2.2",
-  "_inBundle": false,
-  "_integrity": "sha512-QUHFXTMFphWCmLADVD1o7e338abCXXSP7El1Hu+fhFGkCY7RC0uWXIZAXC8Y69nBgYYt+c1EkfYfJp79lot5rQ==",
-  "_location": "/stringee-react-native",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "tag",
-    "registry": true,
-    "raw": "stringee-react-native",
-    "name": "stringee-react-native",
-    "escapedName": "stringee-react-native",
-    "rawSpec": "",
-    "saveSpec": null,
-    "fetchSpec": "latest"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/stringee-react-native/-/stringee-react-native-1.2.2.tgz",
-  "_shasum": "5be2c63812333712d219d04fb09f253377400936",
-  "_spec": "stringee-react-native",
-  "_where": "/Users/hoangduoc/Desktop/ReactNative/react-native-samples/ChatSample",
-  "author": {
-    "name": "Stringee",
-    "email": "info@stringee.com"
-  },
-  "bugs": {
-    "url": "https://github.com/stringeecom/stringee-react-native/issues"
-  },
-  "bundleDependencies": false,
-  "dependencies": {
-    "underscore": "^1.8.3"
-  },
-  "deprecated": false,
+  "name": "stringee-react-native-chat",
+  "version": "0.1.1",
   "description": "The Stringee communication platform makes it easy to embed high-quality interactive video, voice, SMS into webs and mobile apps.",
-  "devDependencies": {
-    "babel-preset-react-native": "4.0.0",
-    "react": "^16.2.0",
-    "react-native": "^0.51.0"
+  "main": "index.js",
+  "homepage": "www.stringee.com",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "homepage": "http://www.stringee.com",
   "keywords": [
     "stringee",
     "react-native",
@@ -49,17 +14,21 @@
     "ios",
     "android",
     "video",
-    "react"
+    "react",
+    "chat"
   ],
+  "author": "Stringee <info@stringee.com>",
   "license": "MIT",
-  "main": "index.js",
-  "name": "stringee-react-native",
+  "dependencies": {
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "babel-preset-react-native": "4.0.0",
+    "react": "^16.2.0",
+    "react-native": "^0.51.0"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stringeecom/stringee-react-native.git"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "version": "1.2.2"
+    "url": "https://github.com/stringeecom/stringee-react-native-chat.git"
+  }
 }

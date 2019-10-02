@@ -1,9 +1,9 @@
 
-# stringee-react-native
+# stringee-react-native-chat
 
 ## Getting started
 
-`$ npm install stringee-react-native --save`
+`$ npm install stringee-react-native-chat --save`
 
 ### Installation
 
@@ -25,7 +25,7 @@
   		pod 'yoga', path: "#{node_modules_path}/react-native/ReactCommon/yoga/yoga.podspec"
   		pod 'React', path: "#{node_modules_path}/react-native", :subspecs => ['DevSupport', 'RCTNetwork']
 
-  		pod 'RNStringee', path: "#{node_modules_path}/stringee-react-native/ios"
+  		pod 'RNStringee', path: "#{node_modules_path}/stringee-react-native-chat/ios"
     end
 
     post_install do |installer|
@@ -68,12 +68,12 @@
   - Add `new RNStringeePackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
   	```
-  	include ':stringee-react-native'
-	project(':stringee-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/stringee-react-native/android')
+  	include ':stringee-react-native-chat'
+	project(':stringee-react-native-chat').projectDir = new File(rootProject.projectDir, '../node_modules/stringee-react-native-chat/android')
   	```
 3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
   	```
-      compile project(':stringee-react-native')
+      compile project(':stringee-react-native-chat')
   	```
 
   

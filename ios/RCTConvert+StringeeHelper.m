@@ -70,7 +70,9 @@
     }
     NSString *lastMsgSender = conversation.lastMsg.sender ? conversation.lastMsg.sender : @"";
     NSString *text = conversation.lastMsg.content ? conversation.lastMsg.content : @"";
-    
+    id lastMsgContent = [self StringToDictionary:text];
+    NSString *creator = conversation.creator ? conversation.creator : @"";
+
     return @{
              @"id": identifier,
              @"name": name,
@@ -78,10 +80,12 @@
              @"isGroup": @(conversation.isGroup),
              @"updatedAt" : @(conversation.lastUpdate),
              @"lastMsgSender" : lastMsgSender,
-             @"text": text,
+             @"text": lastMsgContent,
              @"lastMsgType": @(conversation.lastMsg.type),
              @"unreadCount": @(conversation.unread),
-             @"lastMsgId": lastMsgId
+             @"lastMsgId": lastMsgId,
+             @"creator": creator,
+             @"created" : @(conversation.created)
              };
 }
 
@@ -105,23 +109,23 @@
     NSString *sender = message.sender.length ? message.sender : @"";
     
     // Cần parse text và type ở đây
-    NSString *text = @"";
-    NSNumber *type = [NSNumber numberWithInt:1];
-    NSString *content = message.content.length ? message.content : @"";
-    if (message.type == StringeeMessageTypeCreateGroup || message.type == StringeeMessageTypeRenameGroup || message.type == StringeeMessageTypeNotify) {
-        text = content;
-        type = [NSNumber numberWithInt:message.type];
-    } else {
-         NSError *jsonError;
-         NSData *msgData = [content dataUsingEncoding:NSUTF8StringEncoding];
-         NSDictionary *dicData = [NSJSONSerialization JSONObjectWithData:msgData
-                                                                 options:NSJSONReadingMutableContainers
-                                                                   error:&jsonError];
-        
-//         text = dicData[@"text"] != nil && dicData[@"text"] != [NSNull null] ? dicData[@"text"] : @"";
-        text = content;
-        type = dicData[@"type"] != nil && dicData[@"type"] != [NSNull null] ? dicData[@"type"] : [NSNumber numberWithInt:1];
-    }
+//    NSString *text = @"";
+//    NSNumber *type = [NSNumber numberWithInt:1];
+//    NSString *content = message.content.length ? message.content : @"";
+//    if (message.type == StringeeMessageTypeCreateGroup || message.type == StringeeMessageTypeRenameGroup || message.type == StringeeMessageTypeNotify) {
+//        text = content;
+//        type = [NSNumber numberWithInt:message.type];
+//    } else {
+//         NSError *jsonError;
+//         NSData *msgData = [content dataUsingEncoding:NSUTF8StringEncoding];
+//         NSDictionary *dicData = [NSJSONSerialization JSONObjectWithData:msgData
+//                                                                 options:NSJSONReadingMutableContainers
+//                                                                   error:&jsonError];
+//
+////         text = dicData[@"text"] != nil && dicData[@"text"] != [NSNull null] ? dicData[@"text"] : @"";
+//        text = content;
+//        type = dicData[@"type"] != nil && dicData[@"type"] != [NSNull null] ? dicData[@"type"] : [NSNumber numberWithInt:1];
+//    }
     
     NSString *thumbnailPath = @"";
     NSString *thumbnailUrl = @"";
@@ -135,16 +139,23 @@
     NSString *fileName = @"";
     NSString *contact = @"";
     
+    NSDictionary *content;
+    
     switch (message.type) {
         case StringeeMessageTypeText:
+            content = @{@"content": message.content};
             break;
         case StringeeMessageTypeLink:
+            content = @{@"content": message.content};
             break;
         case StringeeMessageTypeCreateGroup:
+            content = [self StringToDictionary:message.content];
             break;
         case StringeeMessageTypeRenameGroup:
+            content = [self StringToDictionary:message.content];
             break;
         case StringeeMessageTypeNotify:
+            content = [self StringToDictionary:message.content];
             break;
         case StringeeMessageTypePhoto:
         {
@@ -154,6 +165,14 @@
             filePath = photoMsg.filePath.length ? photoMsg.filePath : @"";
             fileUrl = photoMsg.fileUrl.length ? photoMsg.fileUrl : @"";
             ratio = photoMsg.ratio;
+            
+            content = @{
+                        @"photo": @{
+                                    @"filePath": fileUrl,
+                                    @"thumbnail": thumbnailUrl,
+                                    @"ratio": @(ratio)
+                                }
+                        };
         }
             break;
         case StringeeMessageTypeVideo:
@@ -165,6 +184,15 @@
             fileUrl = videoMsg.fileUrl.length ? videoMsg.fileUrl : @"";
             ratio = videoMsg.ratio;
             duration = videoMsg.duration;
+            
+            content = @{
+                        @"video": @{
+                                    @"filePath": fileUrl,
+                                    @"thumbnail": thumbnailUrl,
+                                    @"ratio": @(ratio),
+                                    @"duration": @(duration)
+                                }
+                        };
         }
             break;
         case StringeeMessageTypeAudio:
@@ -173,6 +201,13 @@
             filePath = audioMsg.filePath.length ? audioMsg.filePath : @"";
             fileUrl = audioMsg.fileUrl.length ? audioMsg.fileUrl : @"";
             duration = audioMsg.duration;
+            
+            content = @{
+                        @"audio": @{
+                                @"filePath": fileUrl,
+                                @"duration": @(duration)
+                                }
+                        };
         }
             break;
         case StringeeMessageTypeFile:
@@ -182,6 +217,14 @@
             fileUrl = fileMsg.fileUrl.length ? fileMsg.fileUrl : @"";
             fileName = fileMsg.filename.length ? fileMsg.filename : @"";
             fileLength = fileMsg.length;
+            
+            content = @{
+                        @"file": @{
+                                @"filePath": fileUrl,
+                                @"filename": fileName,
+                                @"length": @(fileLength),
+                                }
+                        };
         }
             break;
         case StringeeMessageTypeLocation:
@@ -189,16 +232,30 @@
             StringeeLocationMessage *locationMsg = (StringeeLocationMessage *)message;
             latitude = locationMsg.latitude;
             longitude = locationMsg.longitude;
+            
+            content = @{
+                        @"location": @{
+                                @"lat": @(latitude),
+                                @"lon": @(longitude)
+                                }
+                        };
         }
             break;
         case StringeeMessageTypeContact:
         {
             StringeeContactMessage *contactMsg = (StringeeContactMessage *)message;
-//            contact = contactMsg.vcard.length ? contactMsg.vcard : @"";
+            NSString *vcard = contactMsg.vcard.length ? contactMsg.vcard : @"";
+            
+            content = @{
+                        @"contact": @{
+                                @"vcard": vcard
+                                }
+                        };
         }
             break;
             
         default:
+            content = @{};
             break;
     }
     
@@ -211,8 +268,8 @@
              @"createdAt": @(message.created),
              @"state": @(message.status),
              @"sequence": @(message.seq),
-             @"type": type,
-             @"text": text,
+             @"type": @(message.type),
+             @"content": content,
              @"thumbnailPath": thumbnailPath,
              @"thumbnailUrl": thumbnailUrl,
              @"filePath": filePath,
@@ -236,6 +293,26 @@
         [response addObject:[self StringeeMessage:message]];
     }
     return response;
+}
+
+// MARK: - Utils
+
++ (id)StringToDictionary:(NSString *)str {
+    if (!str || !str.length) {
+        return [NSNull null];
+    }
+    
+    NSError *jsonError;
+    NSData *objectData = [str dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                         options:NSJSONReadingMutableContainers
+                                                           error:&jsonError];
+    
+    if (jsonError) {
+        return [NSNull null];
+    } else {
+        return json;
+    }
 }
 
 @end

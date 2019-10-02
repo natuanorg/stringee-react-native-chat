@@ -7,7 +7,6 @@ import Message from "./chat/Message";
 import User from "./chat/User";
 import { each } from "underscore";
 
-
 const RNStringeeClient = NativeModules.RNStringeeClient;
 
 const iOS = Platform.OS === "ios" ? true : false;
@@ -145,51 +144,76 @@ export default class extends Component {
     });
   }
 
-  getLocalConversations(userId: string, count, callback) {
+  getLocalConversations(userId: string, count, isAscending, callback) {
     var param = iOS ? count : userId;
 
     RNStringeeClient.getLocalConversations(param, (status, code, message, conversations) => {
       var returnConversations = [];
       if (status) {
-        conversations.map((conversation) => {
-          returnConversations.push(new Conversation(conversation));
-        });
+        if (isAscending) {
+          conversations.reverse().map((conversation) => {
+            returnConversations.push(new Conversation(conversation));
+          });
+        } else {
+          conversations.map((conversation) => {
+            returnConversations.push(new Conversation(conversation));
+          });
+        }
       }
       return callback(status, code, message, returnConversations);
     });
   }
 
-  getLastConversations(count, callback) {
+  getLastConversations(count, isAscending, callback) {
     RNStringeeClient.getLastConversations(count, (status, code, message, conversations) => {
       var returnConversations = [];
       if (status) {
-        conversations.map((conversation) => {
-          returnConversations.push(new Conversation(conversation));
-        });
+        if (isAscending) {
+          // Tăng dần -> Cần đảo mảng
+          conversations.reverse().map((conversation) => {
+            returnConversations.push(new Conversation(conversation));
+          });
+        } else {
+          conversations.map((conversation) => {
+            returnConversations.push(new Conversation(conversation));
+          });
+        }
       }
       return callback(status, code, message, returnConversations);
     });
   }
 
-  getConversationsAfter(datetime, count, callback) {
+  getConversationsAfter(datetime, count, isAscending, callback) {
     RNStringeeClient.getConversationsAfter(datetime, count, (status, code, message, conversations) => {
       var returnConversations = [];
       if (status) {
-        conversations.map((conversation) => {
-          returnConversations.push(new Conversation(conversation));
-        });
+        if (isAscending) {
+          conversations.reverse().map((conversation) => {
+            returnConversations.push(new Conversation(conversation));
+          });
+        } else {
+          conversations.map((conversation) => {
+            returnConversations.push(new Conversation(conversation));
+          });
+        }
       }
       return callback(status, code, message, returnConversations);
     });
   }
 
-  getConversationsBefore(datetime, count, callback) {
+  getConversationsBefore(datetime, count, isAscending, callback) {
     RNStringeeClient.getConversationsBefore(datetime, count, (status, code, message, conversations) => {
       var returnConversations = [];
       if (status) {
-        conversations.map((conversation) => {
-          returnConversations.push(new Conversation(conversation));
-        });
+        if (isAscending) {
+          conversations.reverse().map((conversation) => {
+            returnConversations.push(new Conversation(conversation));
+          });
+        } else {
+          conversations.map((conversation) => {
+            returnConversations.push(new Conversation(conversation));
+          });
+        }
       }
       return callback(status, code, message, returnConversations);
     });
@@ -253,49 +277,73 @@ export default class extends Component {
     RNStringeeClient.deleteMessage(conversationId, messageId, callback);
   }
 
-  getLocalMessages(conversationId, count, callback) {
+  getLocalMessages(conversationId, count, isAscending, callback) {
     RNStringeeClient.getLocalMessages(conversationId, count, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
-        messages.map((msg) => {
-          returnMessages.push(new Message(msg));
-        });
+        if (isAscending) {
+          messages.map((msg) => {
+            returnMessages.push(new Message(msg));
+          });
+        } else {
+          messages.reverse().map((msg) => {
+            returnMessages.push(new Message(msg));
+          });
+        }
       }
       return callback(status, code, message, returnMessages);
     });
   }
 
-  getLastMessages(conversationId, count, callback) {
+  getLastMessages(conversationId, count, isAscending, callback) {
     RNStringeeClient.getLastMessages(conversationId, count, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
-        messages.map((msg) => {
-          returnMessages.push(new Message(msg));
-        });
+        if (isAscending) {
+          messages.map((msg) => {
+            returnMessages.push(new Message(msg));
+          });
+        } else {
+          messages.reverse().map((msg) => {
+            returnMessages.push(new Message(msg));
+          });
+        }
       }
       return callback(status, code, message, returnMessages);
     });
   }
 
-  getMessagesAfter(conversationId, sequence, count, callback) {
+  getMessagesAfter(conversationId, sequence, count, isAscending, callback) {
     RNStringeeClient.getMessagesAfter(conversationId, sequence, count, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
-        messages.map((msg) => {
-          returnMessages.push(new Message(msg));
-        });
+        if (isAscending) {
+          messages.map((msg) => {
+            returnMessages.push(new Message(msg));
+          });
+        } else {
+          messages.reverse().map((msg) => {
+            returnMessages.push(new Message(msg));
+          });
+        }
       }
       return callback(status, code, message, returnMessages);
     });
   }
 
-  getMessagesBefore(conversationId, sequence, count, callback) {
+  getMessagesBefore(conversationId, sequence, count, isAscending, callback) {
     RNStringeeClient.getMessagesBefore(conversationId, sequence, count, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
-        messages.map((msg) => {
-          returnMessages.push(new Message(msg));
-        });
+        if (isAscending) {
+          messages.map((msg) => {
+            returnMessages.push(new Message(msg));
+          });
+        } else {
+          messages.reverse().map((msg) => {
+            returnMessages.push(new Message(msg));
+          });
+        }
       }
       return callback(status, code, message, returnMessages);
     });
