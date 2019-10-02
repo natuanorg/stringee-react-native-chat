@@ -10,12 +10,12 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   s.author       = { "Stringee" => "info@stringee.com" }
   s.platform     = :ios, "8.0"
-  s.source       = { :git => "https://github.com/stringeecom/stringee-react-native.git", :tag => s.version.to_s }
+  s.source       = { :git => "https://github.com/stringeecom/stringee-react-native-chat.git", :tag => s.version.to_s }
   s.source_files  = "*.{h,m}"
   s.requires_arc = true
 
   s.dependency "React"
-  s.dependency "Stringee"
+  s.dependency "StringeeChat"
 end
 
   
