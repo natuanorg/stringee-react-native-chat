@@ -7,7 +7,7 @@ class Conversation {
         this.isGroup = props.isGroup;
         this.updatedAt = props.updatedAt;
         this.lastMsgSender = props.lastMsgSender;
-        this.text = props.text;
+        this.lastMsgContent = props.text;
         this.lastMsgType = props.lastMsgType;
         this.unreadCount = props.unreadCount;
         this.lastMsgId = props.lastMsgId;

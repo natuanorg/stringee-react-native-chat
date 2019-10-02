@@ -70,6 +70,7 @@
     }
     NSString *lastMsgSender = conversation.lastMsg.sender ? conversation.lastMsg.sender : @"";
     NSString *text = conversation.lastMsg.content ? conversation.lastMsg.content : @"";
+    id lastMsgContent = [self StringToDictionary:text];
     NSString *creator = conversation.creator ? conversation.creator : @"";
 
     return @{
@@ -79,7 +80,7 @@
              @"isGroup": @(conversation.isGroup),
              @"updatedAt" : @(conversation.lastUpdate),
              @"lastMsgSender" : lastMsgSender,
-             @"text": text,
+             @"text": lastMsgContent,
              @"lastMsgType": @(conversation.lastMsg.type),
              @"unreadCount": @(conversation.unread),
              @"lastMsgId": lastMsgId,
