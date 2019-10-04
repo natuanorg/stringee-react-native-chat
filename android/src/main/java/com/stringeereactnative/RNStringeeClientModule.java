@@ -3,7 +3,6 @@ package com.stringeereactnative;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -884,6 +883,13 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                                     fileMap.putDouble("length", message.getFileLength());
                                     contentMap.putMap("file", fileMap);
                                     break;
+                                case 7:
+                                    try {
+                                        contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
                                 case 9:
                                     WritableMap locationMap = Arguments.createMap();
                                     locationMap.putDouble("lat", message.getLatitude());
@@ -900,6 +906,13 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                                     stickerMap.putString("name", message.getStickerName());
                                     stickerMap.putString("category", message.getStickerCategory());
                                     contentMap.putMap("sticker", stickerMap);
+                                    break;
+                                case 100:
+                                    try {
+                                        contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                     break;
                             }
                             param.putMap("content", contentMap);
@@ -989,6 +1002,13 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                                     fileMap.putDouble("length", message.getFileLength());
                                     contentMap.putMap("file", fileMap);
                                     break;
+                                case 7:
+                                    try {
+                                        contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
                                 case 9:
                                     WritableMap locationMap = Arguments.createMap();
                                     locationMap.putDouble("lat", message.getLatitude());
@@ -1005,6 +1025,13 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                                     stickerMap.putString("name", message.getStickerName());
                                     stickerMap.putString("category", message.getStickerCategory());
                                     contentMap.putMap("sticker", stickerMap);
+                                    break;
+                                case 100:
+                                    try {
+                                        contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                     break;
                             }
                             param.putMap("content", contentMap);
@@ -1095,6 +1122,13 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                                     fileMap.putDouble("length", message.getFileLength());
                                     contentMap.putMap("file", fileMap);
                                     break;
+                                case 7:
+                                    try {
+                                        contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
                                 case 9:
                                     WritableMap locationMap = Arguments.createMap();
                                     locationMap.putDouble("lat", message.getLatitude());
@@ -1111,6 +1145,13 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                                     stickerMap.putString("name", message.getStickerName());
                                     stickerMap.putString("category", message.getStickerCategory());
                                     contentMap.putMap("sticker", stickerMap);
+                                    break;
+                                case 100:
+                                    try {
+                                        contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                     break;
                             }
                             param.putMap("content", contentMap);
@@ -1200,6 +1241,14 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                                     fileMap.putDouble("length", message.getFileLength());
                                     contentMap.putMap("file", fileMap);
                                     break;
+                                case 7:
+                                    try {
+                                        contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
+
                                 case 9:
                                     WritableMap locationMap = Arguments.createMap();
                                     locationMap.putDouble("lat", message.getLatitude());
@@ -1216,6 +1265,13 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                                     stickerMap.putString("name", message.getStickerName());
                                     stickerMap.putString("category", message.getStickerCategory());
                                     contentMap.putMap("sticker", stickerMap);
+                                    break;
+                                case 100:
+                                    try {
+                                        contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                     break;
                             }
                             param.putMap("content", contentMap);
@@ -1402,6 +1458,13 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                         fileMap.putDouble("length", message.getFileLength());
                         contentMap.putMap("file", fileMap);
                         break;
+                    case 7:
+                        try {
+                            contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        break;
                     case 9:
                         WritableMap locationMap = Arguments.createMap();
                         locationMap.putDouble("lat", message.getLatitude());
@@ -1418,6 +1481,13 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                         stickerMap.putString("name", message.getStickerName());
                         stickerMap.putString("category", message.getStickerCategory());
                         contentMap.putMap("sticker", stickerMap);
+                        break;
+                    case 100:
+                        try {
+                            contentMap = Arguments.fromBundle(jsonToBundle(message.getText()));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         break;
                 }
                 object.putMap("content", contentMap);
