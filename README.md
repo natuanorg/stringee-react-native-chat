@@ -8,6 +8,7 @@
 ## Version 0.1.3
 - Send messages automatically.
 - Fix bug ObjectChange event is repeated.
+- Fix bug markConversationAsRead function.
 
 ### Installation
 
