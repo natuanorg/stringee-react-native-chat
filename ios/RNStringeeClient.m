@@ -37,6 +37,8 @@ RCT_EXPORT_MODULE();
 
 - (void)dealloc
 {
+    [_client disconnect];
+    _client = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

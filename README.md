@@ -5,6 +5,10 @@
 
 `$ npm install stringee-react-native-chat --save`
 
+## Version 0.1.3
+- Send messages automatically.
+- Fix bug ObjectChange event is repeated.
+
 ### Installation
 
 #### iOS
