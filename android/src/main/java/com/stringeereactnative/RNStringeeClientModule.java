@@ -291,7 +291,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putInt("unreadCount", conversation.getTotalUnread());
                 params.putString("lastMsgId", conversation.getLastMsgId());
                 params.putString("creator", conversation.getCreator());
-                params.putDouble("created", conversation.getUpdateAt());
+                params.putDouble("created", conversation.getCreateAt());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -350,7 +350,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putInt("unreadCount", conversation.getTotalUnread());
                 params.putString("lastMsgId", conversation.getLastMsgId());
                 params.putString("creator", conversation.getCreator());
-                params.putDouble("created", conversation.getUpdateAt());
+                params.putDouble("created", conversation.getCreateAt());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -412,7 +412,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putInt("unreadCount", conversation.getTotalUnread());
                     param.putString("lastMsgId", conversation.getLastMsgId());
                     param.putString("creator", conversation.getCreator());
-                    param.putDouble("created", conversation.getUpdateAt());
+                    param.putDouble("created", conversation.getCreateAt());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -472,7 +472,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putInt("unreadCount", conversation.getTotalUnread());
                     param.putString("lastMsgId", conversation.getLastMsgId());
                     param.putString("creator", conversation.getCreator());
-                    param.putDouble("created", conversation.getUpdateAt());
+                    param.putDouble("created", conversation.getCreateAt());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -532,7 +532,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putInt("unreadCount", conversation.getTotalUnread());
                     param.putString("lastMsgId", conversation.getLastMsgId());
                     param.putString("creator", conversation.getCreator());
-                    param.putDouble("created", conversation.getUpdateAt());
+                    param.putDouble("created", conversation.getCreateAt());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -592,7 +592,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putInt("unreadCount", conversation.getTotalUnread());
                     param.putString("lastMsgId", conversation.getLastMsgId());
                     param.putString("creator", conversation.getCreator());
-                    param.putDouble("created", conversation.getUpdateAt());
+                    param.putDouble("created", conversation.getCreateAt());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -1394,7 +1394,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 object.putInt("unreadCount", conversation.getTotalUnread());
                 object.putString("lastMsgId", conversation.getLastMsgId());
                 object.putString("creator", conversation.getCreator());
-                object.putDouble("created", conversation.getUpdateAt());
+                object.putDouble("created", conversation.getCreateAt());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -1592,7 +1592,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putInt("unreadCount", conversation.getTotalUnread());
                 params.putString("lastMsgId", conversation.getLastMsgId());
                 params.putString("creator", conversation.getCreator());
-                params.putDouble("created", conversation.getUpdateAt());
+                params.putDouble("created", conversation.getCreateAt());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
