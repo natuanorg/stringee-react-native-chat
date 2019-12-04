@@ -5,6 +5,9 @@
 
 `$ npm install stringee-react-native-chat --save`
 
+## Version 0.1.5
+- Catch null exception for call(iOS).
+
 ## Version 0.1.4
 - Fix bug xcode build.
 
