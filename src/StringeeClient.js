@@ -39,6 +39,11 @@ export default class extends Component {
   }
 
   _unregisterEvents() {
+    // Keep events for android
+    if (!iOS) {
+      return;
+    }
+
     this._subscriptions.forEach(e => e.remove());
     this._subscriptions = [];
 
@@ -52,38 +57,75 @@ export default class extends Component {
     }
     const platform = Platform.OS;
 
-    each(events, (handler, type) => {
-      const eventName = clientEvents[platform][type];
-      if (eventName !== undefined) {
-        // Voi phan chat can format du lieu
-        if (type == "onObjectChange") {
-          this._subscriptions.push(
-            this._eventEmitter.addListener(eventName, ({ objectType, objects, changeType }) => {
-              var objectChanges = [];
-              if (objectType == 0) {
-                objects.map((object) => {
-                  objectChanges.push(new Conversation(object));
-                });
-              } else if (objectType == 1) {
-                objects.map((object) => {
-                  objectChanges.push(new Message(object));
-                });
-              }
-              handler({ objectType, objectChanges, changeType });
-            })
-          );
+    if (iOS) {
+      each(events, (handler, type) => {
+        const eventName = clientEvents[platform][type];
+        if (eventName !== undefined) {
+          // Voi phan chat can format du lieu
+          if (type == "onObjectChange") {
+            this._subscriptions.push(
+              this._eventEmitter.addListener(eventName, ({ objectType, objects, changeType }) => {
+                var objectChanges = [];
+                if (objectType == 0) {
+                  objects.map((object) => {
+                    objectChanges.push(new Conversation(object));
+                  });
+                } else if (objectType == 1) {
+                  objects.map((object) => {
+                    objectChanges.push(new Message(object));
+                  });
+                }
+                handler({ objectType, objectChanges, changeType });
+              })
+            );
+          } else {
+            this._subscriptions.push(this._eventEmitter.addListener(eventName, data => {
+              handler(data);
+            }));
+          }
+  
+          this._events.push(eventName);
+          RNStringeeClient.setNativeEvent(eventName);
         } else {
-          this._subscriptions.push(this._eventEmitter.addListener(eventName, data => {
-            handler(data);
-          }));
+          console.log(`${type} is not a supported event`);
         }
-
-        this._events.push(eventName);
-        RNStringeeClient.setNativeEvent(eventName);
-      } else {
-        console.log(`${type} is not a supported event`);
-      }
-    });
+      });
+    } else {
+      each(events, (handler, type) => {
+        const eventName = clientEvents[platform][type];
+        if (eventName !== undefined) {
+          if (!this._events.includes(eventName)) {
+            // Voi phan chat can format du lieu
+            if (type == "onObjectChange") {
+              this._subscriptions.push(
+                this._eventEmitter.addListener(eventName, ({ objectType, objects, changeType }) => {
+                  var objectChanges = [];
+                  if (objectType == 0) {
+                    objects.map((object) => {
+                      objectChanges.push(new Conversation(object));
+                    });
+                  } else if (objectType == 1) {
+                    objects.map((object) => {
+                      objectChanges.push(new Message(object));
+                    });
+                  }
+                  handler({ objectType, objectChanges, changeType });
+                })
+              );
+            } else {
+              this._subscriptions.push(this._eventEmitter.addListener(eventName, data => {
+                handler(data);
+              }));
+            }
+    
+            this._events.push(eventName);
+            RNStringeeClient.setNativeEvent(eventName);
+          }
+        } else {
+          console.log(`${type} is not a supported event`);
+        }
+      });
+    }
   }
 
   connect(token: string) {
