@@ -13,6 +13,8 @@ class Conversation {
         this.lastMsgId = props.lastMsgId;
         this.creator = props.creator;
         this.created = props.created;
+        this.lastMsgSeq = props.lastMsgSeq;
+        this.lastMsgCreatedAt = props.lastMsgCreatedAt;
 
         var parts = [];
         var tempParts = props.participants;

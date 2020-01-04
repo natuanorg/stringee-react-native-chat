@@ -85,7 +85,9 @@
              @"unreadCount": @(conversation.unread),
              @"lastMsgId": lastMsgId,
              @"creator": creator,
-             @"created" : @(conversation.created)
+             @"created" : @(conversation.created),
+             @"lastMsgSeq": @(conversation.lastMsgSeqReceived),
+             @"lastMsgCreatedAt": @(conversation.lastTimeNewMsg)
              };
 }
 

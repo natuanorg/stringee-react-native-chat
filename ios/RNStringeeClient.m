@@ -79,6 +79,7 @@ RCT_EXPORT_METHOD(connect:(NSString *)accessToken) {
         _client.incomingCallDelegate = self;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleObjectChangeNotification:) name:StringeeClientObjectsDidChangeNotification object:_client];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNewMessageNotification:) name:StringeeClientNewMessageNotification object:_client];
     }
     [_client connectWithAccessToken:accessToken];
 }
@@ -890,6 +891,32 @@ RCT_EXPORT_METHOD(clearDb:(RCTResponseSenderBlock)callback) {
     id returnObjects = jsObjectDatas ? jsObjectDatas : [NSNull null];
     
     [self sendEventWithName:objectChangeNotification body:@{ @"objectType" : @(objectType), @"objects" : returnObjects, @"changeType" : @(firstObjectChange.type) }];
+}
+
+- (void)handleNewMessageNotification:(NSNotification *)notification {
+    if (![jsEvents containsObject:objectChangeNotification]) return;
+
+    NSDictionary *userInfo = [notification userInfo];
+    if (!userInfo) return;
+    
+    NSString *convId = [userInfo objectForKey:StringeeClientNewMessageConversationIDKey];
+    if (convId == nil || convId.length == 0) {
+        return;
+    }
+    
+    // Lấy về conversation
+    __weak RNStringeeClient *weakSelf = self;
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            return;
+        }
+        if (weakSelf == nil) {
+            return;
+        }
+        
+        RNStringeeClient *strongSelf = weakSelf;
+        [strongSelf sendEventWithName:objectChangeNotification body:@{ @"objectType" : @(0), @"objects" : @[[RCTConvert StringeeConversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeCreate) }];
+    }];
 }
 
 #pragma mark Enums
