@@ -4,6 +4,12 @@
 ## Getting started
 
 `$ npm install stringee-react-native-chat --save`
+## Version 0.1.7
+- Add more last message informations to conversation.
+- Fix bug events are repeated, getConversationInfo, markMessage on iOS.
+
+## Version 0.1.6
+- Fix bug can not receive chat's events after click back button on android.
 
 ## Version 0.1.5
 - Catch null exception for call(iOS).
