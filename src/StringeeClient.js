@@ -31,6 +31,10 @@ export default class extends Component {
   }
 
   componentWillUnmount() {
+	  // Keep events for android
+    if (!iOS) {
+      return;
+    }
     this._unregisterEvents();
   }
 
@@ -39,11 +43,6 @@ export default class extends Component {
   }
 
   _unregisterEvents() {
-    // Keep events for android
-    if (!iOS) {
-      return;
-    }
-
     this._subscriptions.forEach(e => e.remove());
     this._subscriptions = [];
 

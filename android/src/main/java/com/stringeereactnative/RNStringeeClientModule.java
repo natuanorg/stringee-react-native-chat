@@ -292,6 +292,8 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putString("lastMsgId", conversation.getLastMsgId());
                 params.putString("creator", conversation.getCreator());
                 params.putDouble("created", conversation.getCreateAt());
+                params.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
+                params.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -351,6 +353,8 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putString("lastMsgId", conversation.getLastMsgId());
                 params.putString("creator", conversation.getCreator());
                 params.putDouble("created", conversation.getCreateAt());
+                params.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
+                params.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -413,6 +417,8 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putString("lastMsgId", conversation.getLastMsgId());
                     param.putString("creator", conversation.getCreator());
                     param.putDouble("created", conversation.getCreateAt());
+                    param.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
+                    param.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -473,6 +479,8 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putString("lastMsgId", conversation.getLastMsgId());
                     param.putString("creator", conversation.getCreator());
                     param.putDouble("created", conversation.getCreateAt());
+                    param.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
+                    param.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -533,6 +541,8 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putString("lastMsgId", conversation.getLastMsgId());
                     param.putString("creator", conversation.getCreator());
                     param.putDouble("created", conversation.getCreateAt());
+                    param.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
+                    param.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -593,6 +603,8 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putString("lastMsgId", conversation.getLastMsgId());
                     param.putString("creator", conversation.getCreator());
                     param.putDouble("created", conversation.getCreateAt());
+                    param.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
+                    param.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
