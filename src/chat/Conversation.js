@@ -15,6 +15,7 @@ class Conversation {
         this.created = props.created;
         this.lastMsgSeq = props.lastMsgSeq;
         this.lastMsgCreatedAt = props.lastMsgCreatedAt;
+        this.lastMsgState = props.lastMsgState;
 
         var parts = [];
         var tempParts = props.participants;

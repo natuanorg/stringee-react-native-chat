@@ -336,19 +336,17 @@ RCT_EXPORT_METHOD(deleteConversation:(NSString *)conversationId callback:(RCTRes
     }
     
     if (![conversationId isKindOfClass:[NSString class]] || !conversationId.length) {
-        callback(@[@(NO), @(-3), @"Conversation not found."]);
+        callback(@[@(NO), @(-2), @"Conversation not found."]);
         return;
     }
     
     [_client getConversationWithConversationId:conversationId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
-            callback(@[@(NO), @(-3), @"Conversation not found."]);
+            callback(@[@(NO), @(-2), @"Conversation not found."]);
             return;
         }
         [conversation deleteWithCompletionHandler:^(BOOL status, int code, NSString *message) {
-            NSString *returnMsg = status ? @"Success." : @"Fail.";
-            int returnCode = status ? 0 : 1;
-            callback(@[@(status), @(returnCode), returnMsg]);
+            callback(@[@(status), @(code), message]);
         }];
     }];
 }
