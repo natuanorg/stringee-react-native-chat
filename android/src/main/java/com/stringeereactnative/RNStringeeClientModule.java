@@ -69,7 +69,17 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
 
     @ReactMethod
     public void connect(String accessToken) {
-        mClient.connect(accessToken);
+        if (mClient.isConnected()) {
+            if (contains(jsEvents, "onConnectionConnected")) {
+                WritableMap params = Arguments.createMap();
+                params.putString("userId", mClient.getUserId());
+                params.putInt("projectId", mClient.getProjectId());
+                params.putBoolean("isReconnecting", false);
+                sendEvent(getReactApplicationContext(), "onConnectionConnected", params);
+            }
+        } else {
+            mClient.connect(accessToken);
+        }
     }
 
     @ReactMethod
@@ -294,6 +304,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putDouble("created", conversation.getCreateAt());
                 params.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
                 params.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
+                params.putInt("lastMsgState", conversation.getLastMsgState());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -355,6 +366,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putDouble("created", conversation.getCreateAt());
                 params.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
                 params.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
+                params.putInt("lastMsgState", conversation.getLastMsgState());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -419,6 +431,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putDouble("created", conversation.getCreateAt());
                     param.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
                     param.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
+                    param.putInt("lastMsgState", conversation.getLastMsgState());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -481,6 +494,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putDouble("created", conversation.getCreateAt());
                     param.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
                     param.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
+                    param.putInt("lastMsgState", conversation.getLastMsgState());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -543,6 +557,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putDouble("created", conversation.getCreateAt());
                     param.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
                     param.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
+                    param.putInt("lastMsgState", conversation.getLastMsgState());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -605,6 +620,7 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                     param.putDouble("created", conversation.getCreateAt());
                     param.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
                     param.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
+                    param.putInt("lastMsgState", conversation.getLastMsgState());
                     if (conversation.getLastMsg() != null) {
                         try {
                             Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -1407,6 +1423,9 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 object.putString("lastMsgId", conversation.getLastMsgId());
                 object.putString("creator", conversation.getCreator());
                 object.putDouble("created", conversation.getCreateAt());
+                object.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
+                object.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
+                object.putInt("lastMsgState", conversation.getLastMsgState());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
@@ -1605,6 +1624,9 @@ public class RNStringeeClientModule extends ReactContextBaseJavaModule implement
                 params.putString("lastMsgId", conversation.getLastMsgId());
                 params.putString("creator", conversation.getCreator());
                 params.putDouble("created", conversation.getCreateAt());
+                params.putDouble("lastMsgSeq", conversation.getLastMsgSeqReceived());
+                params.putDouble("lastMsgCreatedAt", conversation.getLastTimeNewMsg());
+                params.putInt("lastMsgState", conversation.getLastMsgState());
                 if (conversation.getLastMsg() != null) {
                     try {
                         Bundle bundle = jsonToBundle(conversation.getLastMsg());
