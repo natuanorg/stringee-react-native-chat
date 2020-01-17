@@ -1,4 +1,5 @@
 import User from './User';
+import Message from './Message';
 
 class Conversation {
     constructor(props) {
@@ -6,16 +7,9 @@ class Conversation {
         this.name = props.name;
         this.isGroup = props.isGroup;
         this.updatedAt = props.updatedAt;
-        this.lastMsgSender = props.lastMsgSender;
-        this.lastMsgContent = props.text;
-        this.lastMsgType = props.lastMsgType;
-        this.unreadCount = props.unreadCount;
-        this.lastMsgId = props.lastMsgId;
         this.creator = props.creator;
         this.created = props.created;
-        this.lastMsgSeq = props.lastMsgSeq;
-        this.lastMsgCreatedAt = props.lastMsgCreatedAt;
-        this.lastMsgState = props.lastMsgState;
+        this.unreadCount = props.unreadCount;
 
         var parts = [];
         var tempParts = props.participants;
@@ -23,8 +17,18 @@ class Conversation {
             var user = new User(part);
             parts.push(user);
         });
-
         this.participants = parts;
+
+        this.lastMessage = new Message(props);
+        this.lastMessage.localId = null;
+        this.lastMessage.id = props.lastMsgId;
+        this.lastMessage.conversationId = props.id;
+        this.lastMessage.sender = props.lastMsgSender;
+        this.lastMessage.createdAt = props.lastMsgCreatedAt;
+        this.lastMessage.state = props.lastMsgState;
+        this.lastMessage.sequence = props.lastMsgSeq;
+        this.lastMessage.type = props.lastMsgType;
+        this.lastMessage.content = props.text;
     }
 }
 

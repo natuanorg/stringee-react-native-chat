@@ -4,6 +4,10 @@
 ## Getting started
 
 `$ npm install stringee-react-native-chat --save`
+
+## Version 0.1.8
+- Bug fixes: conversation's localId missing, duplicate events.
+
 ## Version 0.1.7
 - Add more last message informations to conversation.
 - Fix bug events are repeated, getConversationInfo, markMessage on iOS.
