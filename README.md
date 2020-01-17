@@ -5,6 +5,9 @@
 
 `$ npm install stringee-react-native-chat --save`
 
+## Version 0.1.9
+- Bug fixes: call two functions in the same block code(iOS)
+
 ## Version 0.1.8
 - Bug fixes: conversation's localId missing, duplicate events.
 
