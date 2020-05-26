@@ -820,6 +820,7 @@ RCT_EXPORT_METHOD(markConversationAsRead:(NSString *)conversationId callback:(RC
     }
     
     // Lấy về conversation
+    __weak RNStringeeClient *weakSelf = self;
     [_client getConversationWithConversationId:conversationId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             callback(@[@(NO), @(-3), @"Conversation not found."]);
@@ -827,6 +828,10 @@ RCT_EXPORT_METHOD(markConversationAsRead:(NSString *)conversationId callback:(RC
         }
         
         [conversation markAllMessagesAsSeenWithCompletionHandler:^(BOOL status, int code, NSString *message) {
+            if (status && [jsEvents containsObject:objectChangeNotification] && weakSelf != nil) {
+                RNStringeeClient *strongSelf = weakSelf;
+                [strongSelf sendEventWithName:objectChangeNotification body:@{ @"objectType" : @(0), @"objects" : @[[RCTConvert StringeeConversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }];
+            }
             callback(@[@(status), @(code), message]);
         }];
     }];
