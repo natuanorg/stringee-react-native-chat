@@ -8,7 +8,8 @@ const RNStringeeCall = NativeModules.RNStringeeCall;
 
 export default class extends Component {
   static propTypes = {
-    eventHandlers: PropTypes.object
+    eventHandlers: PropTypes.object,
+    clientId: PropTypes.string
   };
 
   constructor(props) {
@@ -62,11 +63,11 @@ export default class extends Component {
   }
 
   makeCall(parameters: string, callback: RNStringeeEventCallback) {
-    RNStringeeCall.makeCall(parameters, callback);
+    RNStringeeCall.makeCall(this.props.clientId, parameters, callback);
   }
 
   initAnswer(callId: string, callback: RNStringeeEventCallback) {
-    RNStringeeCall.initAnswer(callId, callback);
+    RNStringeeCall.initAnswer(this.props.clientId, callId, callback);
   }
 
   answer(callId: string, callback: RNStringeeEventCallback) {
@@ -94,7 +95,7 @@ export default class extends Component {
   }
 
   getCallStats(callId: string, callback: RNStringeeEventCallback) {
-    RNStringeeCall.getCallStats(callId, callback);
+    RNStringeeCall.getCallStats(this.props.clientId, callId, callback);
   }
 
   switchCamera(callId: string, callback: RNStringeeEventCallback) {

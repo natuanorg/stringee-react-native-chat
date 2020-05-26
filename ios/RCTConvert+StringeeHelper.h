@@ -9,8 +9,6 @@
 #import <React/RCTConvert.h>
 #import <Stringee/Stringee.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface RCTConvert (StringeeHelper)
 
 + (NSDictionary *)StringeeIdentity:(StringeeIdentity *)identity;
@@ -25,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSArray *)StringeeMessages:(NSArray<StringeeMessage *> *)messages;
 
++ (BOOL)isValid:(NSString *)value;
+
 @end
 
-NS_ASSUME_NONNULL_END

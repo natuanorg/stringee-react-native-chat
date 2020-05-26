@@ -95,7 +95,8 @@
 
 + (NSArray *)StringeeConversations:(NSArray<StringeeConversation *> *)conversations {
     if (!conversations) {
-        return RCTNullIfNil(nil);
+//        return RCTNullIfNil(nil);
+        return @[];
     }
     NSMutableArray *response = [NSMutableArray array];
     for (StringeeConversation *conversation in conversations) {
@@ -317,6 +318,14 @@
     } else {
         return json;
     }
+}
+
++ (BOOL)isValid:(NSString *)value {
+    if (value == nil || ![value isKindOfClass:[NSString class]] || value.length == 0) {
+        return false;
+    }
+    
+    return true;
 }
 
 @end

@@ -21,6 +21,10 @@ export default class extends Component {
     this._events = [];
     this._subscriptions = [];
     this._eventEmitter = new NativeEventEmitter(RNStringeeClient);
+
+    // Sinh uuid va tao wrapper object trong native
+    this.uuid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    RNStringeeClient.createClientWrapper(this.uuid);
   }
 
   componentWillMount() {
@@ -46,7 +50,7 @@ export default class extends Component {
     this._subscriptions.forEach(e => e.remove());
     this._subscriptions = [];
 
-    this._events.forEach(e => RNStringeeClient.removeNativeEvent(e));
+    this._events.forEach(e => RNStringeeClient.removeNativeEvent(this.uuid, e));
     this._events = [];
   }
 
@@ -63,7 +67,16 @@ export default class extends Component {
           // Voi phan chat can format du lieu
           if (type == "onObjectChange") {
             this._subscriptions.push(
-              this._eventEmitter.addListener(eventName, ({ objectType, objects, changeType }) => {
+              this._eventEmitter.addListener(eventName, ({ uuid, data }) => {
+                // Event cua thang khac
+                if (this.uuid != uuid) {
+                  return;
+                }
+
+                var objectType = data["objectType"];
+                var objects = data["objects"];
+                var changeType = data["changeType"];
+
                 var objectChanges = [];
                 if (objectType == 0) {
                   objects.map((object) => {
@@ -74,17 +87,20 @@ export default class extends Component {
                     objectChanges.push(new Message(object));
                   });
                 }
+                
                 handler({ objectType, objectChanges, changeType });
               })
             );
           } else {
-            this._subscriptions.push(this._eventEmitter.addListener(eventName, data => {
-              handler(data);
+            this._subscriptions.push(this._eventEmitter.addListener(eventName, ({uuid, data}) => {
+              if (this.uuid == uuid) {
+                handler(data);
+              }
             }));
           }
   
           this._events.push(eventName);
-          RNStringeeClient.setNativeEvent(eventName);
+          RNStringeeClient.setNativeEvent(this.uuid, eventName);
         } else {
           console.log(`${type} is not a supported event`);
         }
@@ -118,7 +134,7 @@ export default class extends Component {
             }
     
             this._events.push(eventName);
-            RNStringeeClient.setNativeEvent(eventName);
+            RNStringeeClient.setNativeEvent(this.uuid, eventName);
           }
         } else {
           console.log(`${type} is not a supported event`);
@@ -127,12 +143,16 @@ export default class extends Component {
     }
   }
 
+  getId() {
+    return this.uuid;
+  }
+
   connect(token: string) {
-    RNStringeeClient.connect(token);
+    RNStringeeClient.connect(this.uuid, token);
   }
 
   disconnect() {
-    RNStringeeClient.disconnect();
+    RNStringeeClient.disconnect(this.uuid);
   }
 
   registerPush(
@@ -143,6 +163,7 @@ export default class extends Component {
   ) {
     if (iOS) {
       RNStringeeClient.registerPushForDeviceToken(
+        this.uuid,
         deviceToken,
         isProduction,
         isVoip,
@@ -154,7 +175,7 @@ export default class extends Component {
   }
 
   unregisterPush(deviceToken: string, callback: RNStringeeEventCallback) {
-    RNStringeeClient.unregisterPushToken(deviceToken, callback);
+    RNStringeeClient.unregisterPushToken(this.uuid, deviceToken, callback);
   }
 
   sendCustomMessage(
@@ -162,11 +183,11 @@ export default class extends Component {
     message: string,
     callback: RNStringeeEventCallback
   ) {
-    RNStringeeClient.sendCustomMessage(toUserId, message, callback);
+    RNStringeeClient.sendCustomMessage(this.uuid, toUserId, message, callback);
   }
 
   createConversation(userIds, options, callback) {
-    RNStringeeClient.createConversation(userIds, options, (status, code, message, conversation) => {
+    RNStringeeClient.createConversation(this.uuid, userIds, options, (status, code, message, conversation) => {
       var returnConversation;
       if (status) {
         returnConversation = new Conversation(conversation);
@@ -176,7 +197,7 @@ export default class extends Component {
   }
 
   getConversationById(conversationId, callback) {
-    RNStringeeClient.getConversationById(conversationId, (status, code, message, conversation) => {
+    RNStringeeClient.getConversationById(this.uuid, conversationId, (status, code, message, conversation) => {
       var returnConversation;
       if (status) {
         returnConversation = new Conversation(conversation);
@@ -188,25 +209,45 @@ export default class extends Component {
   getLocalConversations(userId: string, count, isAscending, callback) {
     var param = iOS ? count : userId;
 
-    RNStringeeClient.getLocalConversations(param, (status, code, message, conversations) => {
-      var returnConversations = [];
-      if (status) {
-        if (isAscending) {
-          conversations.reverse().map((conversation) => {
-            returnConversations.push(new Conversation(conversation));
-          });
-        } else {
-          conversations.map((conversation) => {
-            returnConversations.push(new Conversation(conversation));
-          });
+    if (iOS) {
+      // iOS su dung ca 2 tham so
+      RNStringeeClient.getLocalConversations(this.uuid, count, userId, (status, code, message, conversations) => {
+        var returnConversations = [];
+        if (status) {
+          if (isAscending) {
+            conversations.reverse().map((conversation) => {
+              returnConversations.push(new Conversation(conversation));
+            });
+          } else {
+            conversations.map((conversation) => {
+              returnConversations.push(new Conversation(conversation));
+            });
+          }
         }
-      }
-      return callback(status, code, message, returnConversations);
-    });
+        return callback(status, code, message, returnConversations);
+      });
+    } else {
+      // Android chi su dung userId
+      RNStringeeClient.getLocalConversations(userId, (status, code, message, conversations) => {
+        var returnConversations = [];
+        if (status) {
+          if (isAscending) {
+            conversations.reverse().map((conversation) => {
+              returnConversations.push(new Conversation(conversation));
+            });
+          } else {
+            conversations.map((conversation) => {
+              returnConversations.push(new Conversation(conversation));
+            });
+          }
+        }
+        return callback(status, code, message, returnConversations);
+      });
+    }
   }
 
   getLastConversations(count, isAscending, callback) {
-    RNStringeeClient.getLastConversations(count, (status, code, message, conversations) => {
+    RNStringeeClient.getLastConversations(this.uuid, count, (status, code, message, conversations) => {
       var returnConversations = [];
       if (status) {
         if (isAscending) {
@@ -225,7 +266,7 @@ export default class extends Component {
   }
 
   getConversationsAfter(datetime, count, isAscending, callback) {
-    RNStringeeClient.getConversationsAfter(datetime, count, (status, code, message, conversations) => {
+    RNStringeeClient.getConversationsAfter(this.uuid, datetime, count, (status, code, message, conversations) => {
       var returnConversations = [];
       if (status) {
         if (isAscending) {
@@ -243,7 +284,7 @@ export default class extends Component {
   }
 
   getConversationsBefore(datetime, count, isAscending, callback) {
-    RNStringeeClient.getConversationsBefore(datetime, count, (status, code, message, conversations) => {
+    RNStringeeClient.getConversationsBefore(this.uuid, datetime, count, (status, code, message, conversations) => {
       var returnConversations = [];
       if (status) {
         if (isAscending) {
@@ -261,11 +302,11 @@ export default class extends Component {
   }
 
   deleteConversation(conversationId, callback) {
-    RNStringeeClient.deleteConversation(conversationId, callback);
+    RNStringeeClient.deleteConversation(this.uuid, conversationId, callback);
   }
 
   addParticipants(conversationId, userIds, callback) {
-    RNStringeeClient.addParticipants(conversationId, userIds, (status, code, message, users) => {
+    RNStringeeClient.addParticipants(this.uuid, conversationId, userIds, (status, code, message, users) => {
       var returnUsers = [];
       if (status) {
         users.map((user) => {
@@ -277,7 +318,7 @@ export default class extends Component {
   }
 
   removeParticipants(conversationId, userIds, callback) {
-    RNStringeeClient.removeParticipants(conversationId, userIds, (status, code, message, users) => {
+    RNStringeeClient.removeParticipants(this.uuid, conversationId, userIds, (status, code, message, users) => {
       var returnUsers = [];
       if (status) {
         users.map((user) => {
@@ -289,15 +330,15 @@ export default class extends Component {
   }
 
   updateConversation(conversationId, params, callback) {
-    RNStringeeClient.updateConversation(conversationId, params, callback);
+    RNStringeeClient.updateConversation(this.uuid, conversationId, params, callback);
   }
 
   markConversationAsRead(conversationId, callback) {
-    RNStringeeClient.markConversationAsRead(conversationId, callback);
+    RNStringeeClient.markConversationAsRead(this.uuid, conversationId, callback);
   }
 
   getConversationWithUser(userId, callback) {
-    RNStringeeClient.getConversationWithUser(userId, (status, code, message, conversation) => {
+    RNStringeeClient.getConversationWithUser(this.uuid, userId, (status, code, message, conversation) => {
       var returnConversation;
       if (status) {
         returnConversation = new Conversation(conversation);
@@ -307,19 +348,19 @@ export default class extends Component {
   }
 
   getUnreadConversationCount(callback) {
-    RNStringeeClient.getUnreadConversationCount(callback);
+    RNStringeeClient.getUnreadConversationCount(this.uuid, callback);
   }
 
   sendMessage(message, callback) {
-    RNStringeeClient.sendMessage(message, callback);
+    RNStringeeClient.sendMessage(this.uuid, message, callback);
   }
 
   deleteMessage(conversationId, messageId, callback) {
-    RNStringeeClient.deleteMessage(conversationId, messageId, callback);
+    RNStringeeClient.deleteMessage(this.uuid, conversationId, messageId, callback);
   }
 
   getLocalMessages(conversationId, count, isAscending, callback) {
-    RNStringeeClient.getLocalMessages(conversationId, count, (status, code, message, messages) => {
+    RNStringeeClient.getLocalMessages(this.uuid, conversationId, count, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
         if (isAscending) {
@@ -336,8 +377,8 @@ export default class extends Component {
     });
   }
 
-  getLastMessages(conversationId, count, isAscending, callback) {
-    RNStringeeClient.getLastMessages(conversationId, count, (status, code, message, messages) => {
+  getLastMessages(conversationId, count, isAscending, loadDeletedMessage, loadDeletedMessageContent, callback) {
+    RNStringeeClient.getLastMessages(this.uuid, conversationId, count, loadDeletedMessage, loadDeletedMessageContent, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
         if (isAscending) {
@@ -354,8 +395,8 @@ export default class extends Component {
     });
   }
 
-  getMessagesAfter(conversationId, sequence, count, isAscending, callback) {
-    RNStringeeClient.getMessagesAfter(conversationId, sequence, count, (status, code, message, messages) => {
+  getMessagesAfter(conversationId, sequence, count, isAscending, loadDeletedMessage, loadDeletedMessageContent, callback) {
+    RNStringeeClient.getMessagesAfter(this.uuid, conversationId, sequence, count, loadDeletedMessage, loadDeletedMessageContent, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
         if (isAscending) {
@@ -372,8 +413,8 @@ export default class extends Component {
     });
   }
 
-  getMessagesBefore(conversationId, sequence, count, isAscending, callback) {
-    RNStringeeClient.getMessagesBefore(conversationId, sequence, count, (status, code, message, messages) => {
+  getMessagesBefore(conversationId, sequence, count, isAscending, loadDeletedMessage, loadDeletedMessageContent, callback) {
+    RNStringeeClient.getMessagesBefore(this.uuid, conversationId, sequence, count, loadDeletedMessage, loadDeletedMessageContent, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
         if (isAscending) {
@@ -391,6 +432,6 @@ export default class extends Component {
   }
 
   clearDb(callback) {
-    RNStringeeClient.clearDb(callback);
+    RNStringeeClient.clearDb(this.uuid, callback);
   }
 }

@@ -16,6 +16,7 @@
     self = [super init];
     if (self) {
         _calls = [[NSMutableDictionary alloc] init];
+        _clientWrappers = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
