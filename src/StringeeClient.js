@@ -186,23 +186,41 @@ export default class extends Component {
   }
 
   getLocalConversations(userId: string, count, isAscending, callback) {
-    var param = iOS ? count : userId;
-
-    RNStringeeClient.getLocalConversations(param, (status, code, message, conversations) => {
-      var returnConversations = [];
-      if (status) {
-        if (isAscending) {
-          conversations.reverse().map((conversation) => {
-            returnConversations.push(new Conversation(conversation));
-          });
-        } else {
-          conversations.map((conversation) => {
-            returnConversations.push(new Conversation(conversation));
-          });
+    if (iOS) {
+      // iOS su dung ca 2 tham so
+      RNStringeeClient.getLocalConversations(count, userId, (status, code, message, conversations) => {
+        var returnConversations = [];
+        if (status) {
+          if (isAscending) {
+            conversations.reverse().map((conversation) => {
+              returnConversations.push(new Conversation(conversation));
+            });
+          } else {
+            conversations.map((conversation) => {
+              returnConversations.push(new Conversation(conversation));
+            });
+          }
         }
-      }
-      return callback(status, code, message, returnConversations);
-    });
+        return callback(status, code, message, returnConversations);
+      });
+    } else {
+      // Android chi su dung userId
+      RNStringeeClient.getLocalConversations(userId, (status, code, message, conversations) => {
+        var returnConversations = [];
+        if (status) {
+          if (isAscending) {
+            conversations.reverse().map((conversation) => {
+              returnConversations.push(new Conversation(conversation));
+            });
+          } else {
+            conversations.map((conversation) => {
+              returnConversations.push(new Conversation(conversation));
+            });
+          }
+        }
+        return callback(status, code, message, returnConversations);
+      });
+    }
   }
 
   getLastConversations(count, isAscending, callback) {
@@ -337,7 +355,7 @@ export default class extends Component {
   }
 
   getLastMessages(conversationId, count, isAscending, callback) {
-    RNStringeeClient.getLastMessages(conversationId, count, (status, code, message, messages) => {
+    RNStringeeClient.getLastMessages(conversationId, count, false, false, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
         if (isAscending) {
@@ -355,7 +373,7 @@ export default class extends Component {
   }
 
   getMessagesAfter(conversationId, sequence, count, isAscending, callback) {
-    RNStringeeClient.getMessagesAfter(conversationId, sequence, count, (status, code, message, messages) => {
+    RNStringeeClient.getMessagesAfter(conversationId, sequence, count, false, false, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
         if (isAscending) {
@@ -373,7 +391,7 @@ export default class extends Component {
   }
 
   getMessagesBefore(conversationId, sequence, count, isAscending, callback) {
-    RNStringeeClient.getMessagesBefore(conversationId, sequence, count, (status, code, message, messages) => {
+    RNStringeeClient.getMessagesBefore(conversationId, sequence, count, false, false, (status, code, message, messages) => {
       var returnMessages = [];
       if (status) {
         if (isAscending) {

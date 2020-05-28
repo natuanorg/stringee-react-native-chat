@@ -5,6 +5,9 @@
 
 `$ npm install stringee-react-native-chat --save`
 
+## Version 0.2.0
+- Bug fixes: restart ice for one way stream call
+
 ## Version 0.1.9
 - Bug fixes: call two functions in the same block code(iOS)
 

@@ -280,14 +280,14 @@ RCT_EXPORT_METHOD(getConversationById:(NSString *)conversationId callback:(RCTRe
     }];
 }
 
-RCT_EXPORT_METHOD(getLocalConversations:(NSUInteger)count callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getLocalConversations:(NSUInteger)count userId:(NSString *)userId callback:(RCTResponseSenderBlock)callback) {
     
     if (!_client) {
         callback(@[@(NO), @(-1), @"StringeeClient is not initialized.", [NSNull null]]);
         return;
     }
     
-    [_client getLocalConversationsWithCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+    [_client getLocalConversationsWithCount:count userId:userId completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
         callback(@[@(status), @(code), message, [RCTConvert StringeeConversations:conversations]]);
     }];
 }
@@ -752,7 +752,7 @@ RCT_EXPORT_METHOD(getLocalMessages:(NSString *)conversationId count:(NSUInteger)
     }];
 }
 
-RCT_EXPORT_METHOD(getLastMessages:(NSString *)conversationId count:(NSUInteger)count callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getLastMessages:(NSString *)conversationId count:(NSUInteger)count loadDeletedMessage:(BOOL)loadDeletedMessage loadDeletedMessageContent:(BOOL)loadDeletedMessageContent callback:(RCTResponseSenderBlock)callback) {
     
     if (!_client || !_client.hasConnected) {
         callback(@[@(NO), @(-1), @"StringeeClient is not initialized or connected."]);
@@ -766,13 +766,13 @@ RCT_EXPORT_METHOD(getLastMessages:(NSString *)conversationId count:(NSUInteger)c
             return;
         }
         
-        [conversation getLastMessagesWithCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
+        [conversation getLastMessagesWithCount:count loadDeletedMessage:loadDeletedMessage loadDeletedMessageContent:loadDeletedMessageContent completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
             callback(@[@(status), @(code), message, [RCTConvert StringeeMessages:[[messages reverseObjectEnumerator] allObjects]]]);
         }];
     }];
 }
 
-RCT_EXPORT_METHOD(getMessagesAfter:(NSString *)conversationId sequence:(NSUInteger)sequence count:(NSUInteger)count callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getMessagesAfter:(NSString *)conversationId sequence:(NSUInteger)sequence count:(NSUInteger)count loadDeletedMessage:(BOOL)loadDeletedMessage loadDeletedMessageContent:(BOOL)loadDeletedMessageContent callback:(RCTResponseSenderBlock)callback) {
     
     if (!_client || !_client.hasConnected) {
         callback(@[@(NO), @(-1), @"StringeeClient is not initialized or connected."]);
@@ -786,13 +786,13 @@ RCT_EXPORT_METHOD(getMessagesAfter:(NSString *)conversationId sequence:(NSUInteg
             return;
         }
         
-        [conversation getMessagesAfter:sequence withCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
+        [conversation getMessagesAfter:sequence withCount:count loadDeletedMessage:loadDeletedMessage loadDeletedMessageContent:loadDeletedMessageContent completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
             callback(@[@(status), @(code), message, [RCTConvert StringeeMessages:messages]]);
         }];
     }];
 }
 
-RCT_EXPORT_METHOD(getMessagesBefore:(NSString *)conversationId sequence:(NSUInteger)sequence count:(NSUInteger)count callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(getMessagesBefore:(NSString *)conversationId sequence:(NSUInteger)sequence count:(NSUInteger)count loadDeletedMessage:(BOOL)loadDeletedMessage loadDeletedMessageContent:(BOOL)loadDeletedMessageContent callback:(RCTResponseSenderBlock)callback) {
     
     if (!_client || !_client.hasConnected) {
         callback(@[@(NO), @(-1), @"StringeeClient is not initialized or connected."]);
@@ -806,7 +806,7 @@ RCT_EXPORT_METHOD(getMessagesBefore:(NSString *)conversationId sequence:(NSUInte
             return;
         }
         
-        [conversation getMessagesBefore:sequence withCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
+        [conversation getMessagesBefore:sequence withCount:count loadDeletedMessage:loadDeletedMessage loadDeletedMessageContent:loadDeletedMessageContent completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
             callback(@[@(status), @(code), message, [RCTConvert StringeeMessages:[[messages reverseObjectEnumerator] allObjects]]]);
         }];
     }];
