@@ -22,7 +22,7 @@ android {
     }
     lintOptions {
         abortOnError false
-    }	
+    }
 	compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -33,5 +33,5 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'
 	implementation 'com.android.volley:volley:1.1.0'
     implementation 'org.webrtc:google-webrtc:1.0.30039'
-	implementation 'com.stringee.sdk.android:stringee-android-sdk:1.4.0'
+	implementation 'com.stringee.sdk.android:stringee-android-sdk:1.5.0'
 }
